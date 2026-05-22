@@ -31,7 +31,9 @@ export function StudentCourses() {
 
       if (enrollments) {
         setCourses(
-          enrollments.map((e: { course: Course }) => e.course)
+          enrollments
+            .map((e) => e.course as unknown as Course)
+            .filter(Boolean)
         );
       }
     }

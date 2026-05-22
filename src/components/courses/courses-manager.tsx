@@ -56,7 +56,7 @@ export function CoursesManager() {
         .select("*, program:programs(*), teacher:profiles(*)")
         .order("code"),
       supabase.from("programs").select("*").order("name"),
-      supabase.from("profiles").select("*").eq("role", "teacher"),
+      supabase.from("users").select("*").eq("role", "teacher"),
     ]);
     if (cRes.data) setCourses(cRes.data as Course[]);
     if (pRes.data) setPrograms(pRes.data);

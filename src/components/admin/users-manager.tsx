@@ -19,7 +19,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 
 export function UsersManager() {
@@ -27,7 +26,7 @@ export function UsersManager() {
   const supabase = createClient();
 
   async function load() {
-    const { data } = await supabase.from("profiles").select("*").order("full_name");
+    const { data } = await supabase.from("users").select("*").order("full_name");
     if (data) setUsers(data);
   }
 
@@ -36,7 +35,7 @@ export function UsersManager() {
   }, []);
 
   async function updateRole(id: string, role: UserRole) {
-    await supabase.from("profiles").update({ role }).eq("id", id);
+    await supabase.from("users").update({ role }).eq("id", id);
     load();
   }
 

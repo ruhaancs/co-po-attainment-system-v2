@@ -1,5 +1,7 @@
+import { requireRole } from "@/lib/auth";
 import { UsersManager } from "@/components/admin/users-manager";
 
-export default function UsersPage() {
+export default async function UsersPage() {
+  await requireRole("admin");
   return <UsersManager />;
 }

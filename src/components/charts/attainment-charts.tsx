@@ -41,7 +41,7 @@ export function CoAttainmentBarChart({ data }: CoChartProps) {
             border: "1px solid hsl(260 20% 20%)",
             borderRadius: "8px",
           }}
-          formatter={(value: number) => [`${value}%`, ""]}
+          formatter={(value) => [`${value ?? 0}%`, ""]}
         />
         <Legend />
         <Bar dataKey="attainment" name="Attainment %" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
@@ -92,7 +92,7 @@ interface CoRadialProps {
 }
 
 export function CoRadialChart({ data }: CoRadialProps) {
-  const chartData = data.map((d, i) => ({
+  const chartData = data.map((d) => ({
     name: d.co_number,
     value: Math.round(d.attainment * 100),
     fill: getAttainmentColor(d.attainment),
@@ -111,7 +111,7 @@ export function CoRadialChart({ data }: CoRadialProps) {
       >
         <RadialBar background dataKey="value" cornerRadius={4} />
         <Tooltip
-          formatter={(value: number) => [`${value}%`, "Attainment"]}
+          formatter={(value) => [`${value ?? 0}%`, "Attainment"]}
           contentStyle={{
             background: "hsl(260 28% 10%)",
             border: "1px solid hsl(260 20% 20%)",

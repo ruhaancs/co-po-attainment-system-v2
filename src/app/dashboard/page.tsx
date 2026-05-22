@@ -1,4 +1,4 @@
-import { getSessionProfile } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Header } from "@/components/layout/header";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -9,21 +9,18 @@ import { Button } from "@/components/ui/button";
 import { formatPercent } from "@/lib/utils";
 
 export default async function DashboardPage() {
-  const profile = await getSessionProfile();
+  const session = await requireAuth();
   const supabase = await createClient();
 
   const [{ count: courseCount }, { count: studentCount }, { count: teacherCount }] =
     await Promise.all([
       supabase.from("courses").select("*", { count: "exact", head: true }),
       supabase.from("students").select("*", { count: "exact", head: true }),
-      supabase
-        .from("profiles")
-        .select("*", { count: "exact", head: true })
-        .eq("role", "teacher"),
+      supabase.from("teachers").select("*", { count: "exact", head: true }),
     ]);
 
   const quickLinks =
-    profile?.role === "student"
+    session.role === "student"
       ? [
           { href: "/dashboard/my-courses", label: "My Courses" },
           { href: "/dashboard/my-attainment", label: "My Attainment" },
@@ -39,11 +36,11 @@ export default async function DashboardPage() {
   return (
     <div>
       <Header
-        title={`Welcome, ${profile?.full_name?.split(" ")[0] ?? "User"}`}
-        description={`${profile?.role} dashboard — CO-PO attainment overview`}
+        title={`Welcome, ${session.full_name?.split(" ")[0] ?? "User"}`}
+        description={`${session.role} dashboard — CO-PO attainment overview`}
       />
 
-      {profile?.role !== "student" && (
+      {session.role !== "student" && (
         <div className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard title="Courses" value={courseCount ?? 0} icon={BookOpen} />
           <StatCard title="Students" value={studentCount ?? 0} icon={Users} />
@@ -70,7 +67,7 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
 
-      {profile?.role === "admin" && (
+      {session.role === "admin" && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <Card className="glass-card">
             <CardHeader>

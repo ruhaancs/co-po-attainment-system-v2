@@ -19,8 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { signOut } from "@/app/auth/actions";
 import type { UserRole } from "@/lib/types";
 import { useState } from "react";
 
@@ -52,15 +51,13 @@ interface SidebarProps {
 
 export function Sidebar({ role, userName }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const filtered = navItems.filter((item) => item.roles.includes(role));
 
   async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
+    setSigningOut(true);
+    await signOut();
   }
 
   const nav = (
@@ -126,9 +123,15 @@ export function Sidebar({ role, userName }: SidebarProps) {
         {nav}
         <div className="mt-auto border-t border-border/60 p-4">
           <p className="mb-2 truncate text-xs text-muted-foreground">{userName}</p>
-          <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={handleLogout}
+            disabled={signingOut}
+          >
             <LogOut className="h-4 w-4" />
-            Sign out
+            {signingOut ? "Signing out…" : "Sign out"}
           </Button>
         </div>
       </aside>

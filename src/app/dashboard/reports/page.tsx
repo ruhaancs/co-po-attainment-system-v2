@@ -1,7 +1,8 @@
-import { getSessionProfile } from "@/lib/auth";
+import { getSessionUser, requireRole } from "@/lib/auth";
 import { ReportsExport } from "@/components/reports/reports-export";
 
 export default async function ReportsPage() {
-  const profile = await getSessionProfile();
-  return <ReportsExport userName={profile?.full_name ?? "User"} />;
+  await requireRole(["admin", "teacher"]);
+  const session = await getSessionUser();
+  return <ReportsExport userName={session?.full_name ?? "User"} />;
 }

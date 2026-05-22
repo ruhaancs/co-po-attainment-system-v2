@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Assessment, Course, CourseOutcome, Mark, Student } from "@/lib/types";
+import type { Assessment, Course, CourseOutcome, Student } from "@/lib/types";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,9 +65,9 @@ export function MarksManager() {
     if (aRes.data) setAssessments(aRes.data as Assessment[]);
     if (coRes.data) setCos(coRes.data);
 
-    const enrolled = (enrollRes.data ?? []).map(
-      (e: { student: Student }) => e.student
-    );
+    const enrolled = (enrollRes.data ?? [])
+      .map((e) => e.student as unknown as Student)
+      .filter(Boolean);
     setStudents(enrolled);
 
     const assessmentIds = aRes.data?.map((a) => a.id) ?? [];

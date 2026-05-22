@@ -1,5 +1,7 @@
+import { requireRole } from "@/lib/auth";
 import { CoursesManager } from "@/components/courses/courses-manager";
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
+  await requireRole(["admin", "teacher"]);
   return <CoursesManager />;
 }

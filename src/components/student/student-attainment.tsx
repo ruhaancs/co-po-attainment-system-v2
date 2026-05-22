@@ -42,7 +42,9 @@ export function StudentAttainment() {
         .select("course:courses(*)")
         .eq("student_id", student.id);
 
-      const list = (enrollments ?? []).map((e: { course: Course }) => e.course);
+      const list = (enrollments ?? [])
+        .map((e) => e.course as unknown as Course)
+        .filter(Boolean);
       setCourses(list);
       if (list.length) setSelectedCourse(list[0].id);
     }
