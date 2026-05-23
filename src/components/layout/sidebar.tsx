@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard,
   BookOpen,
@@ -21,7 +22,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { signOut } from "@/app/auth/actions";
 import type { UserRole } from "@/lib/types";
 import { useState } from "react";
 
@@ -56,13 +56,23 @@ interface SidebarProps {
 
 export function Sidebar({ role, userName }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const filtered = navItems.filter((item) => item.roles.includes(role));
 
   async function handleLogout() {
+    if (signingOut) return;
     setSigningOut(true);
-    await signOut();
+    setMobileOpen(false);
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.replace("/login");
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
   }
 
   const nav = (
@@ -112,8 +122,8 @@ export function Sidebar({ role, userName }: SidebarProps) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border/60 bg-card/95 backdrop-blur-md transition-transform lg:static lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          "fixed inset-y-0 left-0 flex w-64 flex-col border-r border-border/60 bg-card/95 backdrop-blur-md transition-transform lg:static lg:z-auto lg:translate-x-0",
+          mobileOpen ? "z-50 translate-x-0" : "z-40 -translate-x-full lg:translate-x-0"
         )}
       >
         <div className="flex items-center gap-2 border-b border-border/60 px-4 py-5">
@@ -126,12 +136,13 @@ export function Sidebar({ role, userName }: SidebarProps) {
           </div>
         </div>
         {nav}
-        <div className="mt-auto border-t border-border/60 p-4">
+        <div className="relative z-10 mt-auto border-t border-border/60 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <p className="mb-2 truncate text-xs text-muted-foreground">{userName}</p>
           <Button
+            type="button"
             variant="outline"
             size="sm"
-            className="w-full"
+            className="h-11 w-full touch-manipulation"
             onClick={handleLogout}
             disabled={signingOut}
           >
