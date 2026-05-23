@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { TABLES } from "@/lib/constants";
 import type { Course, CourseOutcome, ProgramOutcome, CoPoMapping } from "@/lib/types";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
@@ -55,7 +56,7 @@ export function CoPoManager() {
     const [coRes, mapRes, poRes] = await Promise.all([
       supabase.from("course_outcomes").select("*").eq("course_id", selectedCourse),
       supabase
-        .from("co_po_mappings")
+        .from(TABLES.coPoMapping)
         .select("*, course_outcome:course_outcomes(*), program_outcome:program_outcomes(*)")
         .in("co_id", (await supabase.from("course_outcomes").select("id").eq("course_id", selectedCourse)).data?.map((c) => c.id) ?? []),
       supabase.from("program_outcomes").select("*").eq("program_id", course.program_id),
@@ -78,7 +79,7 @@ export function CoPoManager() {
   }
 
   async function addMapping() {
-    await supabase.from("co_po_mappings").insert({
+    await supabase.from(TABLES.coPoMapping).insert({
       co_id: mapForm.co_id,
       po_id: mapForm.po_id,
       correlation_level: parseInt(mapForm.correlation_level, 10),
@@ -88,7 +89,7 @@ export function CoPoManager() {
   }
 
   async function deleteMapping(id: string) {
-    await supabase.from("co_po_mappings").delete().eq("id", id);
+    await supabase.from(TABLES.coPoMapping).delete().eq("id", id);
     loadCourseData();
   }
 

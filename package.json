@@ -3,10 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/dev.mjs",
+    "dev:fast": "next dev",
+    "dev:clean": "rm -rf .next && next dev",
+    "fix:styles": "node scripts/fix-styles.mjs",
+    "build": "node scripts/build.mjs",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup": "node scripts/setup-supabase.mjs",
+    "seed:academic": "node scripts/seed-academic.mjs",
+    "seed:courses": "node scripts/seed-btech-courses.mjs",
+    "deploy:vercel": "node scripts/deploy-vercel.mjs",
+    "migrate:post": "node scripts/run-migration.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -41,6 +49,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "autoprefixer": "^10.5.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "postcss": "^8",

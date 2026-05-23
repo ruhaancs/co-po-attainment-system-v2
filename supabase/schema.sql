@@ -52,14 +52,23 @@ CREATE TABLE programs (
 -- TEACHERS
 -- Extends users with role = 'teacher'
 -- -----------------------------------------------------------------------------
+DO $$ BEGIN
+  CREATE TYPE approval_status AS ENUM ('pending', 'approved', 'rejected');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
 CREATE TABLE teachers (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   profile_id      UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
   employee_id     TEXT NOT NULL UNIQUE,
   department_id   UUID REFERENCES departments(id) ON DELETE SET NULL,
   designation     TEXT DEFAULT 'Assistant Professor',
+  approval_status approval_status NOT NULL DEFAULT 'pending',
+  approved_by     UUID REFERENCES users(id) ON DELETE SET NULL,
+  approved_at     TIMESTAMPTZ,
   joined_at       DATE DEFAULT CURRENT_DATE,
-  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- -----------------------------------------------------------------------------
@@ -299,11 +308,12 @@ SET search_path = public
 AS $$
 BEGIN
   IF NEW.role = 'teacher' AND NOT EXISTS (SELECT 1 FROM teachers WHERE profile_id = NEW.id) THEN
-    INSERT INTO teachers (profile_id, employee_id, department_id)
+    INSERT INTO teachers (profile_id, employee_id, department_id, approval_status)
     VALUES (
       NEW.id,
       'EMP-' || UPPER(SUBSTRING(REPLACE(NEW.id::TEXT, '-', '') FROM 1 FOR 8)),
-      (SELECT id FROM departments ORDER BY created_at LIMIT 1)
+      (SELECT id FROM departments ORDER BY created_at LIMIT 1),
+      'pending'
     );
   END IF;
   RETURN NEW;
@@ -386,11 +396,16 @@ CREATE POLICY "students_select_own" ON students FOR SELECT
 CREATE POLICY "students_manage_admin" ON students FOR ALL USING (get_user_role() = 'admin');
 
 -- ACADEMIC DATA (read: all authenticated; write: admin + teacher)
-CREATE POLICY "departments_select" ON departments FOR SELECT TO authenticated USING (true);
-CREATE POLICY "departments_admin" ON departments FOR ALL USING (get_user_role() = 'admin');
+-- Public read so registration dropdowns work before sign-in
+CREATE POLICY "departments_select" ON departments FOR SELECT USING (true);
+CREATE POLICY "departments_write" ON departments FOR ALL
+  USING (get_user_role() IN ('admin', 'teacher'))
+  WITH CHECK (get_user_role() IN ('admin', 'teacher'));
 
-CREATE POLICY "programs_select" ON programs FOR SELECT TO authenticated USING (true);
-CREATE POLICY "programs_admin" ON programs FOR ALL USING (get_user_role() = 'admin');
+CREATE POLICY "programs_select" ON programs FOR SELECT USING (true);
+CREATE POLICY "programs_write" ON programs FOR ALL
+  USING (get_user_role() IN ('admin', 'teacher'))
+  WITH CHECK (get_user_role() IN ('admin', 'teacher'));
 
 CREATE POLICY "courses_select" ON courses FOR SELECT TO authenticated USING (true);
 CREATE POLICY "courses_write" ON courses FOR ALL

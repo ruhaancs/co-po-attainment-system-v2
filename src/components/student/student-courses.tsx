@@ -26,7 +26,7 @@ export function StudentCourses() {
 
       const { data: enrollments } = await supabase
         .from("enrollments")
-        .select("course:courses(*, teacher:profiles(full_name))")
+        .select("course:courses(*, teacher:teachers(profile:users(full_name)))")
         .eq("student_id", student.id);
 
       if (enrollments) {
@@ -55,7 +55,10 @@ export function StudentCourses() {
             <CardContent>
               <p className="font-medium">{c.name}</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                {(c.teacher as { full_name?: string })?.full_name ?? "TBA"}
+                {(
+                  (c.teacher as { profile?: { full_name?: string } })?.profile
+                    ?.full_name ?? "TBA"
+                )}
               </p>
               <p className="mt-2 text-xs text-muted-foreground">{c.credits} credits</p>
             </CardContent>

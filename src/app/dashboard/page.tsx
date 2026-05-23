@@ -27,7 +27,9 @@ export default async function DashboardPage() {
           { href: "/dashboard/analytics", label: "Analytics" },
         ]
       : [
+          { href: "/dashboard/programs", label: "Programs" },
           { href: "/dashboard/courses", label: "Manage Courses" },
+          { href: "/dashboard/enrollments", label: "Enrollments" },
           { href: "/dashboard/marks", label: "Enter Marks" },
           { href: "/dashboard/attainment", label: "View Attainment" },
           { href: "/dashboard/reports", label: "Export Reports" },

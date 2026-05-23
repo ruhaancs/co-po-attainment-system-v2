@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { TABLES } from "@/lib/constants";
 import { calculateCoAttainment, calculatePoAttainment } from "@/lib/attainment";
 import { exportAttainmentReport } from "@/lib/pdf-export";
 import type {
@@ -52,7 +53,7 @@ export function ReportsExport({ userName }: ReportsExportProps) {
         supabase.from("assessments").select("*").eq("course_id", selectedCourse),
         supabase.from("enrollments").select("student_id").eq("course_id", selectedCourse),
         supabase
-          .from("co_po_mappings")
+          .from(TABLES.coPoMapping)
           .select("*")
           .in(
             "co_id",

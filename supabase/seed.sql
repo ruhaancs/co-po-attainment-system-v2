@@ -7,15 +7,30 @@
 -- -----------------------------------------------------------------------------
 -- 1. ORGANIZATION
 -- -----------------------------------------------------------------------------
-INSERT INTO departments (id, name, code) VALUES
-  ('11111111-1111-1111-1111-111111111101', 'Computer Science & Engineering', 'CSE'),
-  ('11111111-1111-1111-1111-111111111102', 'Electronics & Communication', 'ECE')
-ON CONFLICT (code) DO NOTHING;
+-- Full list: see seed-departments-programs.sql
+INSERT INTO departments (name, code) VALUES
+  ('Computer Science & Engineering', 'CSE'),
+  ('Electronics & Communication Engineering', 'ECE'),
+  ('Electrical Engineering', 'EE'),
+  ('Mechanical Engineering', 'ME'),
+  ('Civil Engineering', 'CE'),
+  ('Food Engineering & Technology', 'FET')
+ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name;
 
-INSERT INTO programs (id, name, code, department_id) VALUES
-  ('22222222-2222-2222-2222-222222222201', 'B.Tech Computer Science', 'BTECH-CSE', '11111111-1111-1111-1111-111111111101'),
-  ('22222222-2222-2222-2222-222222222202', 'B.Tech Electronics', 'BTECH-ECE', '11111111-1111-1111-1111-111111111102')
-ON CONFLICT (code) DO NOTHING;
+INSERT INTO programs (name, code, department_id)
+SELECT v.name, v.code, d.id
+FROM (VALUES
+  ('B.Tech Computer Science & Engineering', 'BTECH-CSE', 'CSE'),
+  ('B.Tech Electronics & Communication Engineering', 'BTECH-ECE', 'ECE'),
+  ('B.Tech Electrical Engineering', 'BTECH-EE', 'EE'),
+  ('B.Tech Mechanical Engineering', 'BTECH-ME', 'ME'),
+  ('B.Tech Civil Engineering', 'BTECH-CE', 'CE'),
+  ('B.Tech Food Engineering & Technology', 'BTECH-FET', 'FET')
+) AS v(name, code, dept_code)
+JOIN departments d ON d.code = v.dept_code
+ON CONFLICT (code) DO UPDATE SET
+  name = EXCLUDED.name,
+  department_id = EXCLUDED.department_id;
 
 -- Program Outcomes (12 standard POs for CSE program)
 INSERT INTO program_outcomes (program_id, po_number, description) VALUES

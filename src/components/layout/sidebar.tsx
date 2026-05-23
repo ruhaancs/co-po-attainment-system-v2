@@ -12,6 +12,8 @@ import {
   FileDown,
   Users,
   Building2,
+  Layers,
+  UserPlus,
   GraduationCap,
   Menu,
   X,
@@ -32,7 +34,9 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ["admin", "teacher", "student"] },
+  { href: "/dashboard/programs", label: "Programs", icon: Layers, roles: ["admin", "teacher"] },
   { href: "/dashboard/courses", label: "Courses", icon: BookOpen, roles: ["admin", "teacher"] },
+  { href: "/dashboard/enrollments", label: "Enrollments", icon: UserPlus, roles: ["admin", "teacher"] },
   { href: "/dashboard/co-po", label: "CO-PO Mapping", icon: GitBranch, roles: ["admin", "teacher"] },
   { href: "/dashboard/marks", label: "Marks Entry", icon: PenLine, roles: ["admin", "teacher"] },
   { href: "/dashboard/attainment", label: "Attainment", icon: Target, roles: ["admin", "teacher"] },
@@ -40,6 +44,7 @@ const navItems: NavItem[] = [
   { href: "/dashboard/reports", label: "Reports", icon: FileDown, roles: ["admin", "teacher"] },
   { href: "/dashboard/my-courses", label: "My Courses", icon: BookOpen, roles: ["student"] },
   { href: "/dashboard/my-attainment", label: "My Attainment", icon: Target, roles: ["student"] },
+  { href: "/dashboard/my-marks", label: "My Marks", icon: PenLine, roles: ["student"] },
   { href: "/dashboard/users", label: "Users", icon: Users, roles: ["admin"] },
   { href: "/dashboard/departments", label: "Departments", icon: Building2, roles: ["admin"] },
 ];

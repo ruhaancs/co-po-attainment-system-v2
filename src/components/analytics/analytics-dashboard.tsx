@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { TABLES } from "@/lib/constants";
 import { calculateCoAttainment, calculatePoAttainment } from "@/lib/attainment";
 import type { Assessment, CoPoMapping, Course, CourseOutcome, Mark, ProgramOutcome } from "@/lib/types";
 import { Header } from "@/components/layout/header";
@@ -49,7 +50,7 @@ export function AnalyticsDashboard() {
       supabase.from("assessments").select("*").eq("course_id", selectedCourse),
       supabase.from("enrollments").select("student_id").eq("course_id", selectedCourse),
       supabase
-        .from("co_po_mappings")
+        .from(TABLES.coPoMapping)
         .select("*")
         .in(
           "co_id",

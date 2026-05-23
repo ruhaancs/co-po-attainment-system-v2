@@ -58,7 +58,7 @@ export function MarksManager() {
       supabase.from("course_outcomes").select("*").eq("course_id", selectedCourse),
       supabase
         .from("enrollments")
-        .select("student:students(*, profile:profiles(*))")
+        .select("student:students(*, profile:users(full_name, email))")
         .eq("course_id", selectedCourse),
     ]);
 
@@ -199,7 +199,7 @@ export function MarksManager() {
                       <TableCell className="font-medium">
                         {s.roll_number}
                         <span className="block text-xs text-muted-foreground">
-                          {(s.profile as { full_name?: string })?.full_name}
+                          {(s.profile as { full_name?: string } | null)?.full_name}
                         </span>
                       </TableCell>
                       {assessments.map((a) => (

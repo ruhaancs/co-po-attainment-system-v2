@@ -1,28 +1,7 @@
 import Link from "next/link";
-import { GraduationCap, Shield, Users, BookOpen } from "lucide-react";
+import { GraduationCap, Shield, Users, BookOpen, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-const portals = [
-  {
-    role: "Admin",
-    href: "/login/admin",
-    icon: Shield,
-    description: "Manage users, departments, programs, and system settings.",
-  },
-  {
-    role: "Teacher",
-    href: "/login/teacher",
-    icon: BookOpen,
-    description: "Manage courses, CO-PO mapping, marks, and attainment reports.",
-  },
-  {
-    role: "Student",
-    href: "/login/student",
-    icon: Users,
-    description: "View enrolled courses and your CO attainment progress.",
-  },
-];
 
 export default function HomePage() {
   return (
@@ -35,65 +14,80 @@ export default function HomePage() {
             </div>
             <span className="text-lg font-bold">CO-PO Attainment</span>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/login">Sign in</Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/login">Sign in</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/register">Create account</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Track{" "}
+        <div className="mx-auto max-w-3xl text-center">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            University{" "}
             <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
-              CO & PO Attainment
+              CO–PO Attainment
             </span>
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            A modern university system for course outcomes, program outcomes,
-            marks entry, attainment calculation, and PDF reports.
+          <p className="mt-6 text-lg text-muted-foreground">
+            Production-ready ERP for course outcomes, program outcomes, marks,
+            attainment analytics, and accreditation reports.
           </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Button asChild size="lg">
+              <Link href="/register">
+                Get started <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/login">Sign in</Link>
+            </Button>
+          </div>
         </div>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {portals.map((portal) => {
-            const Icon = portal.icon;
+        <div className="mt-16 grid gap-6 sm:grid-cols-3">
+          {[
+            {
+              icon: Users,
+              title: "Students",
+              desc: "Register with roll number, view courses, marks, and CO attainment.",
+              href: "/register",
+            },
+            {
+              icon: BookOpen,
+              title: "Teachers",
+              desc: "Manage courses, enter marks, map CO–PO, and export reports.",
+              href: "/register",
+            },
+            {
+              icon: Shield,
+              title: "Administrators",
+              desc: "Approve teachers, manage programs, users, and analytics.",
+              href: "/login",
+            },
+          ].map((item) => {
+            const Icon = item.icon;
             return (
-              <Card
-                key={portal.role}
-                className="glass-card transition-colors hover:border-primary/40"
-              >
+              <Card key={item.title} className="glass-card hover:border-primary/30 transition-colors">
                 <CardHeader>
                   <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15">
                     <Icon className="h-5 w-5 text-primary" />
                   </div>
-                  <CardTitle>{portal.role} Portal</CardTitle>
-                  <CardDescription>{portal.description}</CardDescription>
+                  <CardTitle className="text-lg">{item.title}</CardTitle>
+                  <CardDescription>{item.desc}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button asChild className="w-full">
-                    <Link href={portal.href}>Enter as {portal.role}</Link>
+                  <Button asChild variant="secondary" className="w-full">
+                    <Link href={item.href}>Learn more</Link>
                   </Button>
                 </CardContent>
               </Card>
             );
           })}
-        </div>
-
-        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            "Session-based Supabase Auth",
-            "CO-PO correlation mapping",
-            "Weighted attainment engine",
-            "PDF report export",
-          ].map((feature) => (
-            <div
-              key={feature}
-              className="rounded-lg border border-border/50 bg-card/40 px-4 py-3 text-center text-sm text-muted-foreground"
-            >
-              {feature}
-            </div>
-          ))}
         </div>
       </section>
     </main>
